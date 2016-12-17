@@ -11,7 +11,7 @@
     <artifactId>support-tools-share</artifactId>
 
     <name>OOTBee Support Tools - Share Module</name>
-    <packaging>amp</packaging>
+    <packaging>jar</packaging>
 
     <properties>
         <basePackage>org.orderofthebee.addons.support.tools.share</basePackage>
@@ -88,12 +88,16 @@
     </dependencies>
 
     <build>
-        <resources>
+      <resources>
+            <resource>
+                <directory>src/main/amp/config</directory>
+                <filtering>false</filtering>
+            </resource>
             <resource>
                 <directory>src\main\resources</directory>
                 <filtering>true</filtering>
             </resource>
-            <resource>
+            <!--resource>
                 <directory>src\main\amp</directory>
                 <targetPath>${project.build.directory}/amp</targetPath>
                 <filtering>true</filtering>
@@ -101,7 +105,7 @@
                     <exclude>**/.jshintrc</exclude>
                     <exclude>**/.jshintignore</exclude>
                 </excludes>
-            </resource>
+            </resource-->
         </resources>
 
         <plugins>
@@ -110,6 +114,47 @@
                 <configuration>
                     <escapeString>\</escapeString>
                 </configuration>
+
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/classes/META-INF</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/amp/web</directory>
+                                    <!--filtering>true</filtering-->
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <includes>
+                                    <include>org.apache.commons:commons-compress</include>
+                                </includes>
+                            </artifactSet>
+                        </configuration>
+
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -159,7 +204,6 @@
                 </executions>
             </plugin>
         </plugins>
-
         <!-- TODO Handle "standard" JAR, sources + JavaDoc creation which SDK sucks at -->
     </build>
 
